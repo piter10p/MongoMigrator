@@ -4,7 +4,7 @@ using NetMongoMigrator.Core.Extensions;
 
 namespace NetMongoMigrator.Core
 {
-    internal static class MigrationsCollectionGetter
+    internal static class MigrationsGetter
     {
         public static IMongoCollection<Migration> GetOrCreateMigrationsCollection(
             IMongoDatabase mongoDatabase, MigratorConfiguration configuration)

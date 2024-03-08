@@ -7,11 +7,18 @@ namespace NetMongoMigrator.Console.Example.Migrations
     {
         public int Id => 1;
 
-        public async Task Up(IMongoDatabase mongoDatabase)
+        public async Task Up(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)
         {
-            await mongoDatabase.CreateCollectionAsync("TestCollection1");
-            await mongoDatabase.CreateCollectionAsync("TestCollection2");
-            await mongoDatabase.CreateCollectionAsync("TestCollection3");
+            await mongoDatabase.CreateCollectionAsync("TestCollection1", cancellationToken: cancellationToken);
+            await mongoDatabase.CreateCollectionAsync("TestCollection2", cancellationToken: cancellationToken);
+            await mongoDatabase.CreateCollectionAsync("TestCollection3", cancellationToken: cancellationToken);
+        }
+
+        public async Task Down(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)
+        {
+            await mongoDatabase.DropCollectionAsync("TestCollection1", cancellationToken: cancellationToken);
+            await mongoDatabase.DropCollectionAsync("TestCollection2", cancellationToken: cancellationToken);
+            await mongoDatabase.DropCollectionAsync("TestCollection3", cancellationToken: cancellationToken);
         }
     }
 }

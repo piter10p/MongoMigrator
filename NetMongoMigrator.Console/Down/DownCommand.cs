@@ -3,11 +3,11 @@ using NetMongoMigrator.Core;
 using Spectre.Console.Cli;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NetMongoMigrator.Console.Up
+namespace NetMongoMigrator.Console.Down
 {
-    internal class UpCommand : Command<UpSettings>
+    internal class DownCommand : Command<DownSettings>
     {
-        public override int Execute([NotNull] CommandContext context, [NotNull] UpSettings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] DownSettings settings)
         {
             using var loggerFactory = LoggerFactory.Create(builder =>
             builder.AddConsole());
@@ -28,13 +28,13 @@ namespace NetMongoMigrator.Console.Up
 
             var version = GetVersion(settings);
 
-            var migrateTask = migrator.ExecuteMigrationsUp(version);
+            var migrateTask = migrator.ExecuteMigrationsDown(version);
             migrateTask.Wait();
 
             return 0;
         }
 
-        private static int? GetVersion(UpSettings settings)
+        private static int? GetVersion(DownSettings settings)
         {
             if (settings.Version is null)
                 return null;

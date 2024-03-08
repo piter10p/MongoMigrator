@@ -1,4 +1,5 @@
-﻿using NetMongoMigrator.Console.Up;
+﻿using NetMongoMigrator.Console.Down;
+using NetMongoMigrator.Console.Up;
 using Spectre.Console.Cli;
 using System.Reflection;
 
@@ -11,8 +12,12 @@ namespace NetMongoMigrator.Console
             ConsoleMigratorSettings.AssemblyToScan = assemblyToScan;
 
             var app = new CommandApp();
-            app.Configure(c => c
-                .AddCommand<UpCommand>("up"));
+            app.Configure(c =>
+            {
+                c.AddCommand<UpCommand>("up");
+                c.AddCommand<DownCommand>("down");
+            });
+
             return app.Run(args);
         }
     }

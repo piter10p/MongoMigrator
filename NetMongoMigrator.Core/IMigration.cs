@@ -6,6 +6,8 @@ namespace NetMongoMigrator.Core
     {
         public int Id { get; }
 
-        public Task Up(IMongoDatabase mongoDatabase);
+        public Task Up(IMongoDatabase mongoDatabase, CancellationToken cancellationToken);
+
+        public Task Down(IMongoDatabase mongoDatabase, CancellationToken cancellationToken);
     }
 }

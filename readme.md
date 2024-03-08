@@ -17,18 +17,26 @@ Migrator executes script-based migrations defined by classes implementing interf
         {
             public int Id => 1;
 
-            public async Task Up(IMongoDatabase mongoDatabase)
+            public async Task Up(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)
             {
-                await mongoDatabase.CreateCollectionAsync("ExampleCollection1");
-                await mongoDatabase.CreateCollectionAsync("ExampleCollection2");
-                await mongoDatabase.CreateCollectionAsync("ExampleCollection3");
+                await mongoDatabase.CreateCollectionAsync("TestCollection1", cancellationToken: cancellationToken);
+                await mongoDatabase.CreateCollectionAsync("TestCollection2", cancellationToken: cancellationToken);
+                await mongoDatabase.CreateCollectionAsync("TestCollection3", cancellationToken: cancellationToken);
+            }
+
+            public async Task Down(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)
+            {
+                await mongoDatabase.DropCollectionAsync("TestCollection1", cancellationToken: cancellationToken);
+                await mongoDatabase.DropCollectionAsync("TestCollection2", cancellationToken: cancellationToken);
+                await mongoDatabase.DropCollectionAsync("TestCollection3", cancellationToken: cancellationToken);
             }
         }
     }
 
 Migration definition:
 * `Id` - have to be unique. Migrator executes migrations sorting them ascending by id.
-* `Up(IMongoDatabase mongoDatabase)` - method called when migration is executed.
+* `Up(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)` - method called when migration is executed up.
+* `Down(IMongoDatabase mongoDatabase, CancellationToken cancellationToken)` - method called when migration is executed down.
 
 Currently library allows you to launch migrations in two ways.
 * Using core component directly
@@ -68,12 +76,19 @@ You can also scan assembly for migrations:
 
 Then run migrator up to latest version:
 
-    await migrator.ExecuteMigrations();
+    await migrator.ExecuteMigrationsUp();
 
-Or to specified migration id:
+Or up to specified migration id:
 
-    await migrator.ExecuteMigrations(5);
+    await migrator.ExecuteMigrationsUp(5);
 
+You can also run migrator down to latest version:
+
+    await migrator.ExecuteMigrationsDown();
+
+Or down to specified migration id:
+
+    await migrator.ExecuteMigrationsDown(5);
 
 ### II. Using console implementation
 
@@ -90,7 +105,7 @@ Migrator will automaticly scan for migrations inside specified assembly.
 
 You can find example in `Examples/NetMongoMigrator.Console.Example`.
 
-To launch migrator compile your console app and lanuch it:
+To launch migrator compile your console app and execute it:
 
     migratorApp.exe up [connection string] [database name]
 
@@ -98,9 +113,12 @@ You can also migrate to specified migration id:
 
     migratorApp.exe up [connection string] [database name] -v <migration id>
 
+And migrate down:
+
+    migratorApp.exe down [connection string] [database name] -v <migration id>
+
 
 ## Plans for future:
 
-1. Migrating down to specified migration identifier
 1. Handling migrations exceptions
 1. NetMongoMigrator.MongoDbDriverExtensions - extensions for `MongoDb.Driver` making migrations easier to implement
